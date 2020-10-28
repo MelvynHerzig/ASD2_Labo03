@@ -23,7 +23,7 @@ class GraphWeighted : public GraphWeightedCommon<EdgeWeighted<T>> {
     typedef GraphWeightedCommon<EdgeWeighted<T>> BASE;
 
 public:
-// Type des arêtes.
+    // Type des arêtes.
     typedef typename BASE::Edge Edge;
 
     // Type de donnée pour les poids

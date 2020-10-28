@@ -3,6 +3,7 @@
  * Author: Fabien Dutoit
  *
  * Created on 21. octobre 2015, 15:50
+ * Modified on 28. octobre 20201 by Berney Alec, Forestier Quentin, Herzig Melvyn.
  */
 
 #include <cstdlib>
@@ -15,12 +16,16 @@
 
 using namespace std;
 
-// compare les algorithmes de Boruvska et Prim pour calculer le MST, les vecteurs de Edges resultants sont compares
-// retourne true si les algorithmes produisent un resultat similaire, faux sinon
+/**
+ * @brief Test si les MST issu du graphe de filename est correct en comparant deux algorithmes.
+ * @param filename Nom du fichier contenant le graphe.
+ * @return Retourne vrai si les algorithmes produisent un résultat similaire sinon faux.
+ */
 bool testMST(const string& filename) {
     cout << "Test du fichier " << filename;
 
     typedef GraphWeighted<double> Graph;
+
     Graph ewd(filename);
     cout << " (" << ewd.V() << " sommets)" << endl;
 
@@ -28,16 +33,58 @@ bool testMST(const string& filename) {
     MinimumSpanningTree<Graph>::EdgeList toTest = MinimumSpanningTree<Graph>::BoruvkaUnionFind(ewd);
     MinimumSpanningTree<Graph>::EdgeList reference = MinimumSpanningTree<Graph>::EagerPrim(ewd);
 
-/****
-*
-*  A IMPLEMENTER
-*  Si les poids des aretes ne sont pas tous differents, la solution d'un algorithme MST n'est pas toujours unique.
-*  Ici, on teste la correction du MST de Boruvka via trois proprietes :
-*    1. Tous les sommets sont presents dans ses aretes.
-*    2. Le MST a exactement g.V()-1 aretes.
-*    3. Les sommes des poids des aretes des deux MST (Prim et Boruvka) sont identiques. (attention aux comparaisons de double en C++)
-*
-****/
+    vector<bool> marked;
+    marked.resize(ewd.V());
+
+    double totalWeightPrim    = 0;
+    double totalWeightBoruvka = 0;
+
+    // On marque les sommets pour voir si ils sont tous relié
+    for(const Graph::Edge& edge : toTest)
+    {
+       int v = edge.Either();
+      marked[v] = true;
+      marked[edge.Other(v)] = true;
+      totalWeightBoruvka += edge.Weight();
+   }
+
+    // Première condition, tous les sommets sont visité une fois.
+    if (all_of(marked.begin(), marked.end(), [&](int i){ return marked[i];}))
+    {
+       cout << "1. Le MST de Boruvka couvre tous les sommets" << endl;
+    }
+    else
+    {
+       return false;
+    }
+
+    // Deuxième condition, il y a autant d'arrêtes que de sommets - 1.
+    if(toTest.size() == ewd.V() - 1)
+    {
+       cout << "2. Nombre d'aretes du MST de Boruvka : " << toTest.size() << endl;
+    }
+    else
+    {
+       return false;
+    }
+
+    // Troisième condition, le poid des mst est égal (à un lambda près)
+    for(const Graph::Edge& edge : reference)
+    {
+       totalWeightPrim += edge.Weight();
+    }
+
+    if(fabs(totalWeightBoruvka - totalWeightPrim) < 0.000000001)
+    {
+       cout << "3. Poids total du MST de Prim : " << totalWeightPrim << endl;
+       cout << "   Poids total du MST de Boruvka : " << totalWeightBoruvka << endl;
+    }
+    else
+    {
+       return false;
+    }
+
+    return true;
 }
 
 //ARGS tinyEWD.txt

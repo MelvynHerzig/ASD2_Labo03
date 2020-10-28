@@ -3,6 +3,7 @@
  * Author: Olivier Cuisenaire
  * Modified by: Fabien Dutoit
  * Created on 27. octobre 2014, 14:58
+ * Modified on 28. octobre 2020 by Berney Alec, Forestier Quentin, Herzig Melvyn
  */
 
 #ifndef ASD2_MST_h
@@ -32,12 +33,6 @@ public:
 
     // Type liste d'arêtes.
     typedef std::vector<Edge> EdgeList;
-
-private:
-    // Type queue de priorite. MinPQ::top() retourne l'élément le plus petit.
-    typedef std::priority_queue<Edge, std::vector<Edge>, std::greater<Edge>> MinPQ;
-
-public:
 
     // Algorithme de Prim en version stricte. Utilise une queue de priorite
     // pour les sommets a traiter. Celle ci est mise en oeuvre avec std::set.
@@ -85,16 +80,88 @@ public:
         return output;
     }
 
-    // Algorithme de Boruvka. Implemente avec UnionFind
-    // inspire de l'implementation de Robert Sedgewick (Java)
-    static EdgeList BoruvkaUnionFind(const GraphType& g) {
-/****
-*
-*  A IMPLEMENTER
-*  Voir le pseudo-code fourni
-*
-****/
+    /**
+     * @Brief Algorithme de Boruvka. Implemente avec UnionFind.
+     * @param g Graphe sur lequel appliquer Boruvka.
+     * @return Vecteur des arrête du minimum spanning tree.
+     * @details Inspire de l'implementation de Robert Sedgewick (Java).
+     */
+    static EdgeList BoruvkaUnionFind(const GraphType& g)
+    {
+       EdgeList mst;
+       mst.reserve(g.V() - 1);
+       Edge undefinedEdge {};
+
+       UnionFind uf = {g.V()};
+
+       unsigned count = 1;
+
+       while(count < g.V() && mst.size() < g.V() - 1)
+       {
+          EdgeList plusProches;
+          plusProches.resize(g.V());
+          fill(plusProches.begin(), plusProches.end(), undefinedEdge);
+
+          g.forEachEdge([&](const Edge& e){
+            int v = e.Either();
+            int w = e.Other(v);
+            int i = uf.Find(v);
+            int j = uf.Find(w);
+
+            if(i != j)
+            {
+               if(equalEdge(plusProches[i], undefinedEdge) || e < plusProches[i])
+               {
+                  plusProches[i] = e;
+               }
+               if(equalEdge(plusProches[j], undefinedEdge) || e < plusProches[j])
+               {
+                  plusProches[j] = e;
+               }
+            }
+          });
+
+          g.forEachVertex([&](const int i){
+             Edge e = plusProches[i];
+
+             if (!equalEdge(e,undefinedEdge))
+             {
+                int v = e.Either();
+                int w = e.Other(v);
+                if (!uf.Connected(v, w))
+                {
+                   mst.push_back(e);
+                   uf.Union(v, w);
+                }
+             }
+
+          });
+
+         count += count;
+       }
+
+       return mst;
     }
+
+private:
+
+   /**
+    * @Brief Compare si deux arrête pondérées sont égales.
+    * @param e1 Première arrête.
+    * @param e2 Seconde arrête.
+    * @return Vrai si leurs sommet adjacent et leur poids sont égaux
+    * @details Les arrêtes doivent implémenter Either(), Other(int v) et Weight().
+    *          Le poids est comparé à un epsilon près (ici 0.0000001) pour supporter
+    *          des poids flottants.
+    *
+    */
+   static bool equalEdge(const Edge& e1, const Edge& e2)
+   {
+       double epsilon = 0.0000001;
+       int v = e1.Either();
+       int w = e2.Either();
+       return v == w && e1.Other(v) == e2.Other(w) && fabs(e1.Weight() - e2.Weight() < epsilon);
+   }
 
 };
 
