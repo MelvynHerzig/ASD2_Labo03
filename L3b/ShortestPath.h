@@ -3,6 +3,7 @@
  * Author: Olivier Cuisenaire
  *
  * Created on 5. novembre 2014, 10:16
+ * Modified on 4. novembre 2020 by Berney Alec, Forestier Quentin, Herzig Melvyn
  */
 
 #ifndef ASD2_ShortestPath_h
@@ -23,7 +24,8 @@
 // Le calcul des plus courts chemins est fait dans les constructeurs
 // des classes derivees.
 
-template<typename GraphType>   // Type du graphe pondere oriente a traiter
+template<typename GraphType>
+// Type du graphe pondere oriente a traiter
 // GraphType doit se comporter comme un
 // GraphWeightedDirected et definir le
 // type GraphType::Edge
@@ -98,28 +100,107 @@ public:
     }
 };
 
-// Algorithme de Dijkstra
-
-template<typename GraphType> // Type du graphe pondere oriente a traiter
-// GraphType doit se comporter comme un
-// GraphWeightedDirected et definir forEachEdge(Func),
-// ainsi que le type GraphType::Edge. Ce dernier doit
-// se comporter comme EdgeWeightedDirected, c-a-dire definir From(),
-// To() et Weight()
+/**
+ * @brief Implémentation de l'algorithme de Dijkstra.
+ * @tparam GraphType Doit se comporter comme un GraphWeightedDirected et définir V(),
+ *         forEachVertex(Func) et forEachAdjacentEdge(int, Func), ainsi que le type
+ *         GraphType::Edge. Ce dernier doit se comporter comme EdgeWeightedDirected,
+ *         c-a-dire definir From(), To et Weight.
+ */
+template<typename GraphType>
 class DijkstraSP : public ShortestPath<GraphType> {
 public:
+
     typedef ShortestPath<GraphType> BASE;
     typedef typename BASE::Edge Edge;
     typedef typename BASE::Weight Weight;
+    typedef std::pair<Weight, int> WeightVertex;
 
+private:
 
+    /**
+     * @brief Priority Queue des paires <Poids, sommet> à traîter.
+     */
+    std::set<WeightVertex> PQ;
+
+    /**
+     * @brief Retire la paire <poids, sommet> ou poids est le plus petit de PQ.
+     * @return WeightVertex contenant le plus petit poids de PQ.
+     */
+    WeightVertex extract_min()
+    {
+       WeightVertex e = *PQ.begin();
+       PQ.erase(PQ.begin());
+       return e;
+    }
+
+    /**
+     * @brief Retire la paire <oldWeight, v> et la remplace par <newWeight, v> dans PQ.
+     * @param oldWeight Ancien poids de v.
+     * @param newWeight Nouveau poids de v.
+     * @param v Sommet v.
+     */
+    void decrease_priority(Weight oldWeight, Weight newWeight, int v)
+    {
+       PQ.erase(std::make_pair(oldWeight, v));
+       PQ.insert(std::make_pair(newWeight, v));
+    };
+
+    /**
+     * @brief Ajoute la paire WeightVertex (w, i) à la pq.
+     * @param i Numéro du sommet.
+     * @param w Poids jusqu'au sommet.
+     */
+    void add_with_priority(int i, Weight w)
+    {
+       PQ.insert(std::make_pair(w, i));
+    }
+
+    /**
+     * @brief Relâche l'arc e.
+     * @param e Arc à relâcher.
+     */
+    void relax(const Edge& e) {
+       int v = e.From(), w = e.To();
+       Weight distThruE = this->distanceTo[v] + e.Weight();
+
+       if (this->distanceTo[w] > distThruE) {
+          decrease_priority(this->distanceTo[w], distThruE, w);
+          this->distanceTo[w] = distThruE;
+          this->edgeTo[w] = e;
+       }
+    }
+
+public:
+
+    /**
+     * @brief Applique l'algorithme de Dijkstra au graphe g depuis v.
+     * @param g Graphe à traîter.
+     * @param v Sommet de départ.
+     */
     DijkstraSP(const GraphType& g, int v) {
-/****
-*
-*  A IMPLEMENTER
-*  S'inspirer de BellmanFordSP pour l'API
-*
-****/
+
+       //Initialisation
+       this->edgeTo.resize(g.V());
+       this->distanceTo.assign(g.V(), std::numeric_limits<Weight>::max());
+
+       this->edgeTo[v] = Edge(v, v, 0);
+       this->distanceTo[v] = 0;
+
+       g.forEachVertex([&](int i)
+       {
+         add_with_priority(i, this->distanceTo[i]);
+       });
+
+       //Traitement de chaque plus petite paire WeightVertex restante dans PQ.
+       while(!PQ.empty())
+       {
+          WeightVertex ew = extract_min();
+
+          g.forEachAdjacentEdge(ew.second, [&](const Edge& e){
+             relax(e);
+          });
+       }
     }
 };
 
