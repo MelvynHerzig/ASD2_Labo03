@@ -27,39 +27,60 @@ template<typename GraphType>   // Type du graphe pondere oriente a traiter
 // GraphType doit se comporter comme un
 // GraphWeightedDirected et definir le
 // type GraphType::Edge
-class ShortestPath {
+class ShortestPath
+{
 public:
 
-    typedef double Weight;
-    typedef EdgeWeightedDirected<Weight> Edge;
+   typedef double Weight;
+   typedef EdgeWeightedDirected<Weight> Edge;
 
-    // Listes d'arcs et de poids
-    typedef std::vector<Edge> Edges;
-    typedef std::vector<Weight> Weights;
+   // Listes d'arcs et de poids
+   typedef std::vector<Edge> Edges;
+   typedef std::vector<Weight> Weights;
 
-    // Renvoie la distance du chemin le plus court du sommet source a v
-    double distanceToVertex(int v) {
-        return distanceTo.at(v);
-    }
+   // Renvoie la distance du chemin le plus court du sommet source a v
+   double distanceToVertex (int v)
+   {
+      return distanceTo.at(v);
+   }
 
-    // Renvoie le dernier arc u->v du chemin le plus court du sommet source a v
-    Edge edgeToVertex(int v) {
-        return edgeTo.at(v);
-    }
+   // Renvoie le dernier arc u->v du chemin le plus court du sommet source a v
+   Edge edgeToVertex (int v)
+   {
+      return edgeTo.at(v);
+   }
 
-    // Renvoie la liste ordonnee des arcs constituant un chemin le plus court du
-    // sommet source à v.
-    Edges PathTo(int v) {
-/****
-*
-*  A IMPLEMENTER
-*
-****/
-    }
+   /**
+    * @brief Revoie la liste ordonnée des arcs du chemin de s(source) à v.
+    * @param v Sommet de destination.
+    * @return Vecteur ordonné des arc du chemin de s à v.
+    */
+   Edges PathTo (int v)
+   {
+      Edges result;
+      int dest = v;
+      Edge e;
+
+      do
+      {
+         e = edgeToVertex(dest);
+
+         if(e.From() != e.To())
+         {
+            result.push_back(e);
+            dest = e.From();
+         }
+
+      } while (e.From() == e.To());
+
+      std::reverse(result.begin(), result.end());
+
+      return result;
+   }
 
 protected:
-    Edges edgeTo;
-    Weights distanceTo;
+   Edges edgeTo;
+   Weights distanceTo;
 };
 
 // Algorithme de BellmanFord.
@@ -71,41 +92,47 @@ template<typename GraphType> // Type du graphe pondere oriente a traiter
 // se comporter comme EdgeWeightedDirected, c-a-dire definir From(),
 // To() et Weight()
 
-class BellmanFordSP : public ShortestPath<GraphType> {
+class BellmanFordSP : public ShortestPath<GraphType>
+{
 
 private:
-    typedef ShortestPath<GraphType> BASE;
-    typedef typename BASE::Edge Edge;
-    typedef typename BASE::Weight Weight;
+   typedef ShortestPath<GraphType> BASE;
+   typedef typename BASE::Edge Edge;
+   typedef typename BASE::Weight Weight;
 
-    // Relachement de l'arc e
-    void relax(const Edge& e) {
-        int v = e.From(), w = e.To();
-        Weight distThruE = this->distanceTo[v] + e.Weight();
+   // Relachement de l'arc e
+   void relax (const Edge &e)
+   {
+      int v = e.From(), w = e.To();
+      Weight distThruE = this->distanceTo[v] + e.Weight();
 
-        if (this->distanceTo[w] > distThruE) {
-            this->distanceTo[w] = distThruE;
-            this->edgeTo[w] = e;
-        }
-    }
+      if (this->distanceTo[w] > distThruE)
+      {
+         this->distanceTo[w] = distThruE;
+         this->edgeTo[w] = e;
+      }
+   }
 
 public:
 
-    // Constructeur a partir du graphe g et du sommet v a la source
-    // des plus courts chemins
-    BellmanFordSP(const GraphType& g, int v) {
+   // Constructeur a partir du graphe g et du sommet v a la source
+   // des plus courts chemins
+   BellmanFordSP (const GraphType &g, int v)
+   {
+      this->edgeTo.resize(g.V());
+      this->distanceTo.assign(g.V(), std::numeric_limits<Weight>::max());
 
-        this->edgeTo.resize(g.V());
-        this->distanceTo.assign(g.V(), std::numeric_limits<Weight>::max());
+      this->edgeTo[v] = Edge(v, v, 0);
+      this->distanceTo[v] = 0;
 
-        this->edgeTo[v] = Edge(v, v, 0);
-        this->distanceTo[v] = 0;
-
-        for (int i = 0; i < g.V() - 1; ++i)
-            g.forEachEdge([this](const Edge& e) {
-                this->relax(e);
-            });
-    }
+      for (int i = 0; i < g.V() - 1; ++i)
+      {
+         g.forEachEdge([this] (const Edge &e)
+                       {
+                          this->relax(e);
+                       });
+      }
+   }
 };
 
 #endif
