@@ -3,6 +3,7 @@
  * Author: Olivier Cuisenaire
  *
  * Created on 5. novembre 2014, 10:16
+ * Modified on 13. novembre 2020 by Berney Alec, Forestier Quentin, Herzig Melvyn
  */
 
 #ifndef ASD2_ShortestPath_h
@@ -71,7 +72,7 @@ public:
             dest = e.From();
          }
 
-      } while (e.From() == e.To());
+      } while (e.From() != e.To());
 
       std::reverse(result.begin(), result.end());
 
@@ -127,7 +128,7 @@ public:
 
       for (int i = 0; i < g.V() - 1; ++i)
       {
-         g.forEachEdge([this] (const Edge &e)
+         g.forEachEdge([this] (const Edge & e)
                        {
                           this->relax(e);
                        });
