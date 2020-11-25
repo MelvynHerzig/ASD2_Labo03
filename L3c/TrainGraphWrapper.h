@@ -35,8 +35,8 @@ protected:
 public:
 
    /**
-    * @brief Retourne le nombre de sommet dans le graphe, c-à-d le nb de ville du reseau ferroviaire.
-    * @return Retourne le nombre de sommet dans le graphe simulé du reseau ferroviaire
+    * @brief Retourne le nombre de sommets dans le graphe, c-à-d le nb de villes du réseau ferroviaire.
+    * @return Retourne le nombre de sommets dans le graphe simulé du réseau ferroviaire.
     */
    int V () const
    {

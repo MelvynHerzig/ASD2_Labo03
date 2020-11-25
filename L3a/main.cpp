@@ -49,7 +49,7 @@ bool testMST(const string& filename) {
    }
 
     // Première condition, tous les sommets sont visité une fois.
-    if (all_of(marked.begin(), marked.end(), [&](int i){ return marked[i];}))
+    if (!all_of(marked.begin(), marked.end(), [&](int i){ return marked[i];}))
     {
        return false;
     }
@@ -58,20 +58,20 @@ bool testMST(const string& filename) {
 
 
     // Deuxième condition, il y a autant d'arrêtes que de sommets - 1.
-    if(!(toTest.size() == ewd.V() - 1))
+    if(toTest.size() != ewd.V() - 1)
     {
        return false;
     }
     cout << "2. Nombre d'aretes du MST de Boruvka : " << toTest.size() << endl;
 
 
-    // Troisième condition, le poid des mst est égal (à un lambda près)
+    // Troisième condition, le poids des mst est égal (à un lambda près)
     for(const Graph::Edge& edge : reference)
     {
        totalWeightPrim += edge.Weight();
     }
 
-    if(!fabs(totalWeightBoruvka - totalWeightPrim) < 0.000000001)
+    if(fabs(totalWeightBoruvka - totalWeightPrim) > 0.000000001)
     {
        return false;
     }

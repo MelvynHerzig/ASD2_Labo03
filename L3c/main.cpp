@@ -22,9 +22,9 @@ using costFunction = function<double (const TrainNetwork::Line &)>;
  * @brief Renvoie l'itineraire entre la ville de départ et d'arrivée en respectant fCost.
  * @param vDepart No de sommet de la ville de départ.
  * @param vArriveeNo de sommet de la ville d'arrivée.
- * @param fCost Fonction de cout à appliquer sur les lignes de trainNetwork
+ * @param fCost Fonction de coût à appliquer sur les lignes de trainNetwork
  * @param tn Trainnetwork Contenant les sommet et les arrêtes du graphe à traiter.
- * @param outDist Variable où stocker le cout total entre départ et arrivée.
+ * @param outDist Variable où stocker le coût total entre départ et arrivée.
  * @param outItineraire Variable où stocker le string qui décrit l'itinéraire.
  */
 void chemin(int vDepart, int vArrivee, costFunction fCost,const TrainNetwork &tn, double* outDist, string* outItineraire)
@@ -50,8 +50,8 @@ void chemin(int vDepart, int vArrivee, costFunction fCost,const TrainNetwork &tn
 }
 
 /**
- * @brief Calcule et affiche le plus court chemin de la ville depart a la ville arrivee
- *        en passant par le reseau ferroviaire tn.
+ * @brief Calcule et affiche le plus court chemin de la ville départ a la ville arrivée
+ *        en passant par le réseau ferroviaire tn.
  * @param depart Nom de la ville de départ.
  * @param arrivee Nom de la ville d'arrivée
  * @param tn Réseau ferroviaire.
@@ -78,8 +78,8 @@ void PlusCourtChemin (const string &depart, const string &arrivee, TrainNetwork 
 
 
 /**
- * @brief Calcule et affiche le plus court chemin de la ville depart a la ville arrivee
- *        en passant par le reseau ferroviaire tn ayant une ville en travaux  inaccessible.
+ * @brief Calcule et affiche le plus court chemin de la ville départ a la ville arrivée
+ *        en passant par le réseau ferroviaire tn ayant une ville en travaux  inaccessible.
  * @param depart Nom de la ville de départ.
  * @param arrivee Nom de la ville d'arrivée
  * @param gareEnTravaux Nom de la ville où la gare est en travaux.
@@ -109,8 +109,8 @@ void PlusCourtCheminAvecTravaux (const string &depart, const string &arrivee, co
 }
 
 /**
- * @brief Calcule et affiche le plus rapide chemin de la ville depart a la ville arrivee via la ville "via"
- *        en passant par le reseau ferroviaire tn.
+ * @brief Calcule et affiche le plus rapide chemin de la ville départ a la ville arrivée via la ville "via"
+ *        en passant par le réseau ferroviaire tn.
  * @param depart Nom de la ville de départ.
  * @param arrivee Nom de la ville d'arrivée.
  * @param via Nom de la ville intermédiaire.
@@ -138,9 +138,9 @@ void PlusRapideChemin (const string &depart, const string &arrivee, const string
 }
 
 /**
- * @brief Calcule et affiche le plus reseau a renover couvrant toutes les villes le moins cher.
- * @param tn Reseau ferroviaire.
- * @details Le prix pour renover 1 km de chemin de fer est de :
+ * @brief Calcule et affiche le réseau à rénover le moins chère possible, couvrant toutes les villes.
+ * @param tn Réseau ferroviaire.
+ * @details Le prix pour rénover 1 km de chemin de fer est de :
  *              - 15 CHF par km pour les lignes ayant 4 voies
  *              - 10 CHF par km pour les lignes ayant 3 voies
  *              - 6 CHF par km pour les lignes ayant 2 voies

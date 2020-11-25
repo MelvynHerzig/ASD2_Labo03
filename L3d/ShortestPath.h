@@ -111,11 +111,11 @@ public:
 
 /**
  * @brief Vérifie si le graphe contient un circuit à coût négatif.
- * @tparam GraphType Type du graphe pondere oriente à traiter.
+ * @tparam GraphType Type du graphe pondéré orienté à traiter.
  * @details GraphType doit se comporter comme un
- *          GraphWeightedDirected et definir forEachEdge(Func),
+ *          GraphWeightedDirected et définir forEachEdge(Func),
  *          ainsi que le type GraphType::Edge. Ce dernier doit
- *          se comporter comme EdgeWeightedDirected, c-a-d definir From(),
+ *          se comporter comme EdgeWeightedDirected, c-a-d définir From(),
  *          To() et Weight().
  */
 template<typename GraphType>
@@ -184,7 +184,7 @@ private:
 public:
 
    /**
-    * @brief Constructeur a partir du graphe g et du sommet v a la source
+    * @brief Constructeur à partir du graphe g et du sommet v a la source
     *        des plus courts chemins
     * @param g Graphe où calculer les plus courts chemins.
     * @param v Numéro du sommet source.
@@ -199,16 +199,16 @@ public:
 
       // Vérifie si chaque sommet peut atteindre la source
       g.forEachVertex([&] (int s)
-                      {
-                         if (!isVerified[s])
-                         {
-                            int vReached = checkAccessToSource(s);
-                            if (vReached != source)
-                            {
-                               throw GraphNegativeDirectedCycleException(getLoop(vReached));
-                            }
-                         }
-                      });
+      {
+         if (!isVerified[s])
+         {
+            int vReached = checkAccessToSource(s);
+            if (vReached != source)
+            {
+               throw GraphNegativeDirectedCycleException(getLoop(vReached));
+            }
+         }
+      });
 
    }
 

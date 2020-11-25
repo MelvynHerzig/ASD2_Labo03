@@ -16,9 +16,10 @@
 using namespace std;
 using costFunction = const std::function<double (double)>;
 
-/*
- * @brief Affiche la transformation de 1 par chaque poids des arcs de loop issu d'un
- *        graphe à symboles
+/**
+ * @brief Affiche le circuit qui permet de générer un bénéfice.
+ * @param loop Circuit absorbant du SymbolGraphe
+ * @param sg le graphe de type SymbolGraphe
  * @details Edge doit implémenter int From() const, int To() const, double Weight() const
  *          SymbolGraphe doit implémenter std::string symbol(int idx) const.
  */
