@@ -4,7 +4,7 @@
  *
  * Created on 27. octobre 2014, 16:24
  * Updated on 16. aout 2019 by Antoine Rochat
- * Modified on 13. novembre 2020 by Herzig Melvyn
+ * Modified on 13. novembre 2020 by Berney Alec, Forestier Quentin, Herzig Melvyn
  */
 
 #ifndef ASD2_TrainGraphWrapper_h

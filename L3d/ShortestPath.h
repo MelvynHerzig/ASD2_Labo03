@@ -115,7 +115,7 @@ public:
  * @details GraphType doit se comporter comme un
  *          GraphWeightedDirected et definir forEachEdge(Func),
  *          ainsi que le type GraphType::Edge. Ce dernier doit
- *          se comporter comme EdgeWeightedDirected, c-a-dire definir From(),
+ *          se comporter comme EdgeWeightedDirected, c-a-d definir From(),
  *          To() et Weight().
  */
 template<typename GraphType>

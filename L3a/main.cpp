@@ -51,22 +51,19 @@ bool testMST(const string& filename) {
     // Première condition, tous les sommets sont visité une fois.
     if (all_of(marked.begin(), marked.end(), [&](int i){ return marked[i];}))
     {
-       cout << "1. Le MST de Boruvka couvre tous les sommets" << endl;
-    }
-    else
-    {
        return false;
     }
 
+    cout << "1. Le MST de Boruvka couvre tous les sommets" << endl;
+
+
     // Deuxième condition, il y a autant d'arrêtes que de sommets - 1.
-    if(toTest.size() == ewd.V() - 1)
-    {
-       cout << "2. Nombre d'aretes du MST de Boruvka : " << toTest.size() << endl;
-    }
-    else
+    if(!(toTest.size() == ewd.V() - 1))
     {
        return false;
     }
+    cout << "2. Nombre d'aretes du MST de Boruvka : " << toTest.size() << endl;
+
 
     // Troisième condition, le poid des mst est égal (à un lambda près)
     for(const Graph::Edge& edge : reference)
@@ -74,15 +71,13 @@ bool testMST(const string& filename) {
        totalWeightPrim += edge.Weight();
     }
 
-    if(fabs(totalWeightBoruvka - totalWeightPrim) < 0.000000001)
-    {
-       cout << "3. Poids total du MST de Prim : " << totalWeightPrim << endl;
-       cout << "   Poids total du MST de Boruvka : " << totalWeightBoruvka << endl;
-    }
-    else
+    if(!fabs(totalWeightBoruvka - totalWeightPrim) < 0.000000001)
     {
        return false;
     }
+
+    cout << "3. Poids total du MST de Prim : " << totalWeightPrim << endl;
+    cout << "   Poids total du MST de Boruvka : " << totalWeightBoruvka << endl;
 
     return true;
 }
